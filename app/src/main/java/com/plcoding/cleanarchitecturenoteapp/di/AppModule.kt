@@ -3,13 +3,19 @@ package com.plcoding.cleanarchitecturenoteapp.di
 import android.app.Application
 import androidx.room.Room
 import com.plcoding.cleanarchitecturenoteapp.feature.data.data_source.NoteDatabase
+import com.plcoding.cleanarchitecturenoteapp.feature.data.repository.NoteRepositoryImpl
+import com.plcoding.cleanarchitecturenoteapp.feature.domain.repository.NoteRepository
+import com.plcoding.cleanarchitecturenoteapp.feature.domain.use_case.DeleteNoteUseCase
+import com.plcoding.cleanarchitecturenoteapp.feature.domain.use_case.GetNotesUseCase
+import com.plcoding.cleanarchitecturenoteapp.feature.domain.use_case.NoteUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn
+@InstallIn(SingletonComponent::class)
 object AppModule {
 
     @Provides
@@ -19,5 +25,21 @@ object AppModule {
             app,
             NoteDatabase::class.java,
             NoteDatabase.DATABASE_NAME).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideNoteRepository(db: NoteDatabase): NoteRepository{
+        return NoteRepositoryImpl(db.noteDao)
+    }
+
+
+    @Provides
+    @Singleton
+    fun providesNoteUseCases(repository: NoteRepository): NoteUseCase{
+        return NoteUseCase(
+            getNotesUseCase = GetNotesUseCase(repository),
+            deleteNoteUseCase = DeleteNoteUseCase(repository)
+        )
     }
 }
