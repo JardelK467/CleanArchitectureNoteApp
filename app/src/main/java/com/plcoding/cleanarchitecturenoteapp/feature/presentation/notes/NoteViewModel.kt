@@ -26,7 +26,7 @@ class  NoteViewModel @Inject constructor(
     private val state: State<NoteState> = _state
 
     private var recentlyDeletedNote: Note? = null
-    private var getNotesJob: Job? = null
+    private var getNotesJob: Job? = null //Helps to keep track
 
     init {
         //Initialises order
